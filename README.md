@@ -63,3 +63,21 @@ cd StreamWatch
 ### 2. Start All Services
 docker-compose up --build
 
+📊 Monitoring
+Prometheus
+Access Prometheus UI: 👉 http://localhost:9090
+
+Grafana
+Access Grafana Dashboard: 👉 http://localhost:3000
+Note: Add Prometheus as a data source (http://prometheus:9090) and import dashboards to visualize Kafka message flow and consumer metrics.
+
+🛠️ Tech Stack
+Backend: Python (Kafka Producer/Consumer)
+Message Broker: Apache Kafka
+Database: PostgreSQL
+Monitoring: Prometheus + Grafana
+Containerization: Docker & Docker Compose
+
+👨‍💻 Author
+Bakr Bouaziz
+💼 Full-Stack & MLOps Engineer
