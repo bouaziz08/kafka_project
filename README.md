@@ -80,4 +80,4 @@ Containerization: Docker & Docker Compose
 
 👨‍💻 Author
 Bakr Bouaziz
-💼 Full-Stack & MLOps Engineer
+💼 Software enginner
