@@ -11,6 +11,7 @@ COPY . .
 ENV PYTHONUNBUFFERED=1 \
     KAFKA_BROKER=kafka:9092
 
-EXPOSE 8010
+EXPOSE 8000 8012
 
-CMD ["python", "order_producer.py"]
+CMD ["uvicorn", "order_producer:app", "--host", "0.0.0.0", "--port", "8000"]
+

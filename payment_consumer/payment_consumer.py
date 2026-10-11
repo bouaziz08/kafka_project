@@ -1,5 +1,6 @@
 import json
 import logging, psycopg2
+import os
 from confluent_kafka import Consumer
 from prometheus_client import start_http_server, Counter
 
@@ -10,7 +11,7 @@ start_http_server(8021)
 payments_received = Counter("payments_received_total", "Number of payments received")
 
 consumer = Consumer({
-    "bootstrap.servers": "localhost:9092",
+    "bootstrap.servers": os.getenv("KAFKA_BROKER", "localhost:9092"),
     "group.id": "payment-processor-group",
     "auto.offset.reset": "earliest"
 })
@@ -20,11 +21,11 @@ logger.info("Payment consumer started")
 
 # Database connection
 conn = psycopg2.connect(
-    dbname="kafka_project",
-    user="admin",
-    password="azerty@147",
-    host="localhost",
-    port="5432"
+    dbname=os.getenv("DB_NAME", "kafka_project"),
+    user=os.getenv("DB_USER", "admin"),
+    password=os.getenv("DB_PASSWORD", "azerty@147"),
+    host=os.getenv("DB_HOST", "localhost"),
+    port=os.getenv("DB_PORT", "5432")
 )
 if conn:
     print("✅ Connected to PostgreSQL")
@@ -34,10 +35,30 @@ cursor = conn.cursor()
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS payments (
         payment_id VARCHAR(255) PRIMARY KEY,
-        order_id VARCHAR(255),
+        order_id VARCHAR(255) NOT NULL,
         amount FLOAT,
-        method VARCHAR(255)
+        method VARCHAR(255),
+        CONSTRAINT fk_payment_order
+            FOREIGN KEY (order_id) REFERENCES orders(order_id)
 )
+""")
+conn.commit()
+
+cursor.execute("""
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM pg_constraint
+            WHERE conname = 'fk_payment_order'
+              AND conrelid = 'payments'::regclass
+        ) THEN
+            ALTER TABLE payments
+                ADD CONSTRAINT fk_payment_order
+                FOREIGN KEY (order_id) REFERENCES orders(order_id);
+        END IF;
+    END
+    $$;
 """)
 conn.commit()
 

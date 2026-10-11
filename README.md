@@ -12,7 +12,7 @@ It demonstrates how to build a **microservices architecture** for event-driven s
 | Service | Description |
 |----------|-------------|
 | **order_producer** | Sends new order messages to the Kafka topic `orders`. |
-| **payment_producer** | Sends payment messages to the Kafka topic `payments`. |
+| **payment_producer** | Accepts payments for existing `order_id` values on `POST /payments` at port `8001`, then sends linked payment messages to Kafka. |
 | **order_consumer** | Consumes `orders` messages and stores them in PostgreSQL. |
 | **payment_consumer** | Consumes `payments` messages and stores them in PostgreSQL. |
 | **Kafka** | Core message broker for streaming communication. |

@@ -11,6 +11,6 @@ COPY . .
 ENV PYTHONUNBUFFERED=1 \
     KAFKA_BROKER=kafka:9092
 
-EXPOSE 8021
+EXPOSE 8000 8011
 
-CMD ["python", "payment_producer.py"]
+CMD ["uvicorn", "payment_producer:app", "--host", "0.0.0.0", "--port", "8000"]
